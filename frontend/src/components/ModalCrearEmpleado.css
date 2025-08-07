@@ -1,0 +1,83 @@
+/* Modal overlay: fondo oscuro semitransparente cubriendo toda la pantalla */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  overflow-y: auto; /* Permite scroll vertical si el contenido es alto */
+  padding: 20px; /* Evita que el contenido quede pegado al borde */
+}
+
+/* Contenido principal de la modal */
+.modal-content {
+  background-color: #fff;
+  padding: 25px 30px;
+  border-radius: 10px;
+  width: 680px;
+  max-width: 95vw;
+  max-height: 95vh; /* Limita la altura para evitar que sobrepase la pantalla */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  text-align: center;
+  color: #222;
+  font-family: Arial, sans-serif;
+  overflow-y: auto; /* Scroll interno si el contenido excede max-height */
+  -webkit-overflow-scrolling: touch; /* Mejora scroll en iOS */
+}
+
+/* Botón cerrar (X) en la esquina superior derecha */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+  color: #000;
+}
+
+/* Inputs de formulario */
+.modal-content input {
+  width: 100%;
+  padding: 10px 12px;
+  margin: 8px 0;
+  border: 1.8px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  outline-color: #4caf50;
+  transition: border-color 0.2s ease;
+}
+
+.modal-content input:focus {
+  border-color: #4caf50;
+}
+
+/* Botones dentro de la modal */
+.modal-content button {
+  margin-top: 15px;
+  padding: 10px 22px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.modal-content button:hover {
+  background-color: #43a047;
+}
