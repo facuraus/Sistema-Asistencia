@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./supervisor.css";
+import "./Supervisor.css";
 import ModalCrearEmpleado from "./ModalCrearEmpleado";
 
 export default function Supervisor() {

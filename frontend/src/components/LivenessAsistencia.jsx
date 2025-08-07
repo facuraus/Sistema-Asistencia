@@ -1,6 +1,6 @@
 import { useState } from "react";
 import LivenessCheck from "./LivenessCheck";
-import "./LivenessAsistencia.css"; // Asegurate de crear este archivo con estilos
+import "./LivenessAsistencia.css"; 
 
 export default function LivenessAsistencia({ onClose }) {
   const [fotoCapturada, setFotoCapturada] = useState(null);

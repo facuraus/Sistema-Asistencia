@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./empleado.css";
+import "./Empleado.css";
 import LivenessAsistencia from "./LivenessAsistencia"; // Importamos el componente
 
 const cards = [

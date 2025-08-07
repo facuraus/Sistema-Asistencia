@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./supervisor.css";
+import "./Supervisor.css";
 import ModalCrearSucursal from "./ModalCrearSucursal";
 // import ModalCrearSupervisor from "./ModalCrearSupervisor";
 // import ModalMoverEmpleado from "./ModalMoverEmpleado";
