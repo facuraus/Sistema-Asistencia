@@ -2,7 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
 import Supervisor from "./components/Supervisor";
 import Empleado from "./components/Empleado";
-import Gerente from "./components/Gerente"; // nuevo import
+import Gerente from "./components/Gerente";
+import VentanaQr from "./components/VentanaQr"; // 👈 nuevo import
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/supervisor" element={<Supervisor />} />
         <Route path="/empleado" element={<Empleado />} />
         <Route path="/gerente" element={<Gerente />} /> 
+        <Route path="/registrar-dispositivo" element={<VentanaQr />} /> {/* 👈 nueva ruta */}
       </Routes>
     </BrowserRouter>
   );
