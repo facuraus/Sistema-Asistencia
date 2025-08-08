@@ -19,3 +19,4 @@ EXPOSE 5000
 
 # Ejecutamos el backend con el python del entorno virtual
 CMD ["/opt/venv/bin/python", "-m", "backend.app"]
+ 
