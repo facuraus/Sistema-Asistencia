@@ -73,7 +73,7 @@ def sucursales_sin_dispositivo():
 @gerente_bp.route("/sucursales/<int:sucursal_id>/generar-token", methods=["POST"])
 def generar_token_qr(sucursal_id):
     token = str(uuid.uuid4())
-    base_url = "http://192.168.0.100:5173"
+    base_url = "https://sistema-asistencia-gzo5.vercel.app/"
 
     db.session.execute(text("""
         INSERT INTO registros_dispositivos (token, sucursal_id, creado_en, usado) 
