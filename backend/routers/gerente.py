@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, make_response
 from backend.extensions import db
-from geopy.geocoders import Nominatim
-from geopy.exc import GeocoderTimedOut
+from geopy.geocoders import Nominatim # type: ignore
+from geopy.exc import GeocoderTimedOut # type: ignore
 from sqlalchemy import text
 import uuid
 from datetime import datetime

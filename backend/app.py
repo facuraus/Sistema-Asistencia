@@ -12,7 +12,7 @@ from backend.init_db import crear_base_si_no_existe
 app = Flask(__name__)
 
 # Obtener la URL desde la variable de entorno de Railway y adaptarla
-db_url = os.getenv("DATABASE_URL", "mysql://root:pass@localhost/sistema_asistencias")
+db_url = os.getenv("DATABASE_URL", "mysql://root:Facuraus123-@localhost/sistema_asistencias")
 if db_url.startswith("mysql://"):
     db_url = db_url.replace("mysql://", "mysql+mysqlconnector://", 1)
 
