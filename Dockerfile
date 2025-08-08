@@ -1,22 +1,25 @@
 FROM python:3.12-slim
 
-# Instalamos cmake y herramientas para compilar
-RUN apt-get update && apt-get install -y cmake build-essential && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    cmake \
+    build-essential \
+    libboost-all-dev \
+    libgtk-3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copiamos todo el contenido del proyecto al contenedor
-COPY . .
+# Copiamos primero el requirements.txt desde backend para aprovechar cache
+COPY backend/requirements.txt ./backend/requirements.txt
 
-# Creamos el entorno virtual
 RUN python -m venv /opt/venv
 
-# Actualizamos pip e instalamos dependencias usando pip del venv
-RUN /opt/venv/bin/pip install --upgrade pip && /opt/venv/bin/pip install -r requirements.txt
+# Instalamos dependencias con pip, apuntando al requirements dentro de backend
+RUN /opt/venv/bin/pip install --upgrade pip && /opt/venv/bin/pip install --no-cache-dir -r ./backend/requirements.txt
 
-# Exponemos el puerto (ajustalo si tu app usa otro)
+# Copiamos todo el proyecto después
+COPY . .
+
 EXPOSE 5000
 
-# Ejecutamos el backend con el python del entorno virtual
 CMD ["/opt/venv/bin/python", "-m", "backend.app"]
- 
