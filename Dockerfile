@@ -1,5 +1,6 @@
 FROM python:3.12-slim
 
+# Actualizar apt y agregar dependencias necesarias para compilación y librerías
 RUN apt-get update && apt-get install -y \
     cmake \
     build-essential \
@@ -12,20 +13,31 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
+# Copiar requirements.txt para instalar dependencias
 COPY requirements.txt ./requirements.txt
 
+# Crear entorno virtual
 RUN python -m venv /opt/venv
 
 ENV PATH="/opt/venv/bin:$PATH"
 
-RUN pip install --upgrade pip
+# Actualizar pip, setuptools y wheel
+RUN pip install --upgrade pip setuptools wheel
+
+# Instalar face_recognition_models desde GitHub antes que requirements.txt
+RUN pip install --no-cache-dir git+https://github.com/ageitgey/face_recognition_models
+
+# Instalar resto de dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Prueba que la librería se pueda importar (falla el build si no)
+# Probar que face_recognition_models se importe sin errores
 RUN python -c "import face_recognition_models; print('face_recognition_models OK')"
 
+# Copiar todo el código de la app
 COPY . .
 
+# Exponer puerto para Flask
 EXPOSE 5000
 
+# Comando para iniciar la app
 CMD ["python", "-m", "backend.app"]
