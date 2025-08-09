@@ -11,9 +11,8 @@ from backend.init_db import crear_base_si_no_existe
 
 app = Flask(__name__)
 
-# Leer la URL de conexión desde variable de entorno (Railway)
+# Leer URL desde variable de entorno (Railway)
 db_url = os.getenv("DATABASE_URL")
-
 if not db_url:
     raise ValueError("❌ No se encontró la variable DATABASE_URL en el entorno.")
 
@@ -21,14 +20,16 @@ if not db_url:
 if db_url.startswith("mysql://"):
     db_url = db_url.replace("mysql://", "mysql+pymysql://", 1)
 
+print(f"🔗 Conectando a base de datos: {db_url}")
+
 app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# Inicializar base de datos y CORS
+# Inicializar DB y CORS
 db.init_app(app)
 CORS(app)
 
-# Crear base si no existe (dentro de contexto de app)
+# Crear base y tablas si no existen
 with app.app_context():
     crear_base_si_no_existe()
 
