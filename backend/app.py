@@ -31,4 +31,4 @@ app.register_blueprint(empleado_bp, url_prefix="/api/empleado")
 app.register_blueprint(gerente_bp, url_prefix="/api")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True) 
