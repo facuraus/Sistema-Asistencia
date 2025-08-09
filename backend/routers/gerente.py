@@ -90,6 +90,7 @@ def registrar_dispositivo():
     data = request.json
     token = data.get("token")
     dispositivo_id = data.get("dispositivo_id")
+    print(f"Registrar dispositivo - token: {token}, dispositivo_id: {dispositivo_id}")  # DEBUG
 
     if not token or not dispositivo_id:
         return jsonify({"error": "Faltan datos"}), 400
@@ -100,19 +101,20 @@ def registrar_dispositivo():
     """), {"token": token}).fetchone()
 
     if not result:
+        print("Token inválido o ya usado")  # DEBUG
         return jsonify({"error": "Token inválido o ya usado"}), 403
 
-    # Asignar dispositivo a la sucursal
     db.session.execute(text("""
         UPDATE sucursales SET dispositivo_id = :disp 
         WHERE id = :sid
     """), {"disp": dispositivo_id, "sid": result.sucursal_id})
 
-    # Marcar token como usado
     db.session.execute(text("""
         UPDATE registros_dispositivos SET usado = TRUE 
         WHERE token = :token
     """), {"token": token})
     db.session.commit()
 
+    print("Dispositivo registrado correctamente")  # DEBUG
     return jsonify({"mensaje": "Dispositivo registrado correctamente"}), 200
+
