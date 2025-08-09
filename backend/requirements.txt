@@ -11,4 +11,3 @@ sqlalchemy
 pymysql
 flask_sqlalchemy
 git+https://github.com/ageitgey/face_recognition_models
- 
