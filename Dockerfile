@@ -1,5 +1,6 @@
 FROM python:3.12-slim
 
+# Instala dependencias del SO necesarias y git para la instalación desde git
 RUN apt-get update && apt-get install -y \
     cmake \
     build-essential \
@@ -12,17 +13,21 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copiamos primero el requirements.txt desde backend para aprovechar cache
-COPY backend/requirements.txt ./backend/requirements.txt
+# Copia el requirements.txt unificado
+COPY requirements.txt ./requirements.txt
 
+# Crea y activa virtualenv y usa PATH para no escribir rutas largas
 RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Instalamos dependencias con pip, apuntando al requirements dentro de backend
-RUN /opt/venv/bin/pip install --upgrade pip && /opt/venv/bin/pip install --no-cache-dir -r ./backend/requirements.txt
+# Actualiza pip e instala las dependencias
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiamos todo el proyecto después
+# Copia todo el proyecto después para aprovechar caché en instalación de libs
 COPY . .
 
 EXPOSE 5000
 
-CMD ["/opt/venv/bin/python", "-m", "backend.app"]
+# Corre la app con python del virtualenv
+CMD ["python", "-m", "backend.app"]
