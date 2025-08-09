@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 
+const API_BASE_URL = "https://sistema-asistencia.up.railway.app";
+
 export default function VentanaQr() {
   const [token, setToken] = useState("");
   const [deviceId, setDeviceId] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // Función para generar UUID
+  // Generar UUID para deviceId persistente
   const generarUUID = () =>
     "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
       const r = (Math.random() * 16) | 0,
@@ -20,7 +23,7 @@ export default function VentanaQr() {
     const tokenParam = params.get("token") || "";
     setToken(tokenParam);
 
-    // Obtener o generar deviceId persistente
+    // Obtener o crear deviceId persistente
     let storedId = localStorage.getItem("device_id");
     if (!storedId) {
       storedId = generarUUID();
@@ -38,8 +41,9 @@ export default function VentanaQr() {
       return;
     }
 
+    setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/registrar-dispositivo", {
+      const res = await fetch(`${API_BASE_URL}/api/registrar-dispositivo`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, dispositivo_id: deviceId }),
@@ -54,16 +58,24 @@ export default function VentanaQr() {
       }
     } catch (err) {
       setError("Error de red o servidor.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div style={{ padding: 20 }}>
       <h2>Registro de dispositivo desde QR</h2>
-      <p><strong>Token:</strong> {token}</p>
-      <p><strong>Device ID:</strong> {deviceId}</p>
+      <p>
+        <strong>Token:</strong> {token}
+      </p>
+      <p>
+        <strong>Device ID:</strong> {deviceId}
+      </p>
 
-      <button onClick={registrarDispositivo}>Registrar este dispositivo</button>
+      <button onClick={registrarDispositivo} disabled={loading}>
+        {loading ? "Registrando..." : "Registrar este dispositivo"}
+      </button>
 
       {mensaje && <p style={{ color: "green" }}>{mensaje}</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
