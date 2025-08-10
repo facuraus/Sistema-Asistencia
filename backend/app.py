@@ -8,15 +8,25 @@ from backend.routers.supervisor import supervisor
 from backend.routers.empleado import empleado_bp
 from backend.routers.gerente import gerente_bp
 from backend.init_db import crear_base_si_no_existe
+from dotenv import load_dotenv
+
+# Cargar variables desde .env si existe (modo local)
+load_dotenv()
 
 app = Flask(__name__)
 
-# Leer URL desde variable de entorno (Railway)
+# Intentar leer desde Railway (variable real de entorno)
 db_url = os.getenv("DATABASE_URL")
-if not db_url:
-    raise ValueError("❌ No se encontró la variable DATABASE_URL en el entorno.")
 
-# Asegurar formato compatible con SQLAlchemy
+# Si no existe, usar la del .env local (SQLALCHEMY_DATABASE_URI)
+if not db_url:
+    db_url = os.getenv("SQLALCHEMY_DATABASE_URI")
+
+# Validar que tenemos URL de DB
+if not db_url:
+    raise ValueError("❌ No se encontró configuración de base de datos.")
+
+# Ajustar formato para SQLAlchemy si es MySQL
 if db_url.startswith("mysql://"):
     db_url = db_url.replace("mysql://", "mysql+pymysql://", 1)
 
@@ -24,10 +34,14 @@ print(f"🔗 Conectando a base de datos: {db_url}")
 
 app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "clave_por_defecto")
 
 # Inicializar DB y CORS
 db.init_app(app)
 CORS(app)
+
+# Setear variable de entorno para init_db.py
+os.environ["DATABASE_URL"] = db_url
 
 # Crear base y tablas si no existen
 with app.app_context():
