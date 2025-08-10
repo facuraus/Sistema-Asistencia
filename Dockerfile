@@ -1,6 +1,8 @@
+# Usamos una imagen base ligera con Python 3.12
 FROM python:3.12-slim
 
-# Actualizar apt y agregar dependencias necesarias para compilación y librerías
+# Actualizamos el sistema e instalamos dependencias necesarias para compilación
+# y librerías que usan OpenCV, dlib, face_recognition, etc.
 RUN apt-get update && apt-get install -y \
     cmake \
     build-essential \
@@ -11,33 +13,32 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
+# Definimos el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copiar requirements.txt para instalar dependencias
+# Copiamos el archivo con las dependencias
 COPY requirements.txt ./requirements.txt
 
-# Crear entorno virtual
+# Creamos un entorno virtual para aislar las dependencias
 RUN python -m venv /opt/venv
 
+# Ajustamos la variable PATH para usar el entorno virtual por defecto
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Actualizar pip, setuptools y wheel
+# Actualizamos pip, setuptools y wheel a versiones recientes
 RUN pip install --upgrade pip setuptools wheel
 
-# Instalar face_recognition_models desde GitHub antes que requirements.txt
-RUN pip install --no-cache-dir git+https://github.com/ageitgey/face_recognition_models
-
-# Instalar resto de dependencias
+# Instalamos todas las dependencias listadas en requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Probar que face_recognition_models se importe sin errores
+# Verificamos que la librería face_recognition_models se haya instalado correctamente
 RUN python -c "import face_recognition_models; print('face_recognition_models OK')"
 
-# Copiar todo el código de la app
+# Copiamos el resto del código fuente de la aplicación al contenedor
 COPY . .
 
-# Exponer puerto para Flask
+# Exponemos el puerto 5000 para que Flask pueda recibir conexiones externas
 EXPOSE 5000
 
-# Comando para iniciar la app
+# Comando que se ejecuta al iniciar el contenedor para levantar la app Flask
 CMD ["python", "-m", "backend.app"]
