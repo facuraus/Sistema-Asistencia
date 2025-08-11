@@ -5,6 +5,9 @@ from geopy.exc import GeocoderTimedOut  # type: ignore
 from sqlalchemy import text
 import uuid
 from datetime import datetime
+from flask import jsonify, current_app as app
+from sqlalchemy import text
+from backend.extensions import db
 
 gerente_bp = Blueprint("gerente_bp", __name__)
 
@@ -59,16 +62,19 @@ def crear_sucursal():
         return jsonify({"error": f"Error interno del servidor: {str(e)}"}), 500
 
 
-# Listar sucursales sin dispositivo asignado
 @gerente_bp.route("/sucursales/sin-dispositivo", methods=["GET"])
 def sucursales_sin_dispositivo():
-    result = db.session.execute(text("""
-        SELECT id, nombre FROM sucursales WHERE dispositivo_id IS NULL
-    """)).fetchall()
-
-    sucursales = [{"id": r.id, "nombre": r.nombre} for r in result]
-    return jsonify(sucursales), 200
-
+    try:
+        app.logger.info("Ejecutando consulta: sucursales sin dispositivo asignado")
+        result = db.session.execute(text("""
+            SELECT id, nombre FROM sucursales WHERE dispositivo_id IS NULL
+        """)).fetchall()
+        app.logger.info(f"Filas obtenidas: {len(result)}")
+        sucursales = [{"id": r.id, "nombre": r.nombre} for r in result]
+        return jsonify(sucursales), 200
+    except Exception as e:
+        app.logger.error(f"Error en sucursales_sin_dispositivo: {e}")
+        return jsonify({"error": str(e)}), 500
 
 # Generar token QR para asignar dispositivo
 @gerente_bp.route("/sucursales/<int:sucursal_id>/generar-token", methods=["POST"])
