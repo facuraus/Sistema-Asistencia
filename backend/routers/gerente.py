@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, make_response
 from backend.extensions import db
-from geopy.geocoders import Nominatim # type: ignore
-from geopy.exc import GeocoderTimedOut # type: ignore
+from geopy.geocoders import Nominatim  # type: ignore
+from geopy.exc import GeocoderTimedOut  # type: ignore
 from sqlalchemy import text
 import uuid
 from datetime import datetime
@@ -20,7 +20,6 @@ def crear_sucursal():
 
     try:
         data = request.get_json(force=True, silent=True) or {}
-
         nombre = data.get("nombre")
         direccion = data.get("direccion")
         radio = data.get("radio_metros", 100)
@@ -59,6 +58,7 @@ def crear_sucursal():
         db.session.rollback()
         return jsonify({"error": f"Error interno del servidor: {str(e)}"}), 500
 
+
 # Listar sucursales sin dispositivo asignado
 @gerente_bp.route("/sucursales/sin-dispositivo", methods=["GET"])
 def sucursales_sin_dispositivo():
@@ -69,11 +69,12 @@ def sucursales_sin_dispositivo():
     sucursales = [{"id": r.id, "nombre": r.nombre} for r in result]
     return jsonify(sucursales), 200
 
+
 # Generar token QR para asignar dispositivo
 @gerente_bp.route("/sucursales/<int:sucursal_id>/generar-token", methods=["POST"])
 def generar_token_qr(sucursal_id):
     token = str(uuid.uuid4())
-    base_url = "https://sistema-asistencia-gzo5.vercel.app/"
+    base_url = "https://sistema-asistencia-gzo5.vercel.app"  # sin "/" final para evitar doble slash
 
     db.session.execute(text("""
         INSERT INTO registros_dispositivos (token, sucursal_id, creado_en, usado) 
@@ -84,9 +85,17 @@ def generar_token_qr(sucursal_id):
     qr_url = f"{base_url}/registrar-dispositivo?token={token}"
     return jsonify({"token": token, "url": qr_url})
 
+
 # Registrar dispositivo con token desde celular
-@gerente_bp.route("/registrar-dispositivo", methods=["POST"])
+@gerente_bp.route("/registrar-dispositivo", methods=["POST", "OPTIONS"])
 def registrar_dispositivo():
+    if request.method == "OPTIONS":
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response, 200
+
     data = request.json
     token = data.get("token")
     dispositivo_id = data.get("dispositivo_id")
@@ -117,4 +126,3 @@ def registrar_dispositivo():
 
     print("Dispositivo registrado correctamente")  # DEBUG
     return jsonify({"mensaje": "Dispositivo registrado correctamente"}), 200
-

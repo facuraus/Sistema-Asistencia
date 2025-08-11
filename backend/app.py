@@ -38,7 +38,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "clave_por_defecto")
 
 # Inicializar DB y CORS
 db.init_app(app)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # Setear variable de entorno para init_db.py
 os.environ["DATABASE_URL"] = db_url
