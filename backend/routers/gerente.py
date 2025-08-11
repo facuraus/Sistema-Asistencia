@@ -11,6 +11,11 @@ from backend.extensions import db
 
 gerente_bp = Blueprint("gerente_bp", __name__)
 
+# Endpoint simple para test rápido de conexión
+@gerente_bp.route("/ping", methods=["GET"])
+def ping():
+    return jsonify({"message": "pong"}), 200
+
 # Crear sucursal con geocoding
 @gerente_bp.route("/sucursales", methods=["POST", "OPTIONS"])
 def crear_sucursal():
@@ -61,7 +66,6 @@ def crear_sucursal():
         db.session.rollback()
         return jsonify({"error": f"Error interno del servidor: {str(e)}"}), 500
 
-
 @gerente_bp.route("/sucursales/sin-dispositivo", methods=["GET"])
 def sucursales_sin_dispositivo():
     try:
@@ -90,7 +94,6 @@ def generar_token_qr(sucursal_id):
 
     qr_url = f"{base_url}/registrar-dispositivo?token={token}"
     return jsonify({"token": token, "url": qr_url})
-
 
 # Registrar dispositivo con token desde celular
 @gerente_bp.route("/registrar-dispositivo", methods=["POST", "OPTIONS"])
