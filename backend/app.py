@@ -54,5 +54,9 @@ app.register_blueprint(supervisor, url_prefix="/api/supervisor")
 app.register_blueprint(empleado_bp, url_prefix="/api/empleado")
 app.register_blueprint(gerente_bp, url_prefix="/api")
 
+@app.route("/api/ping")
+def ping():
+    return {"mensaje": "pong"}, 200
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
